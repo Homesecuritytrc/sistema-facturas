@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 
 export default function Home() {
   useEffect(() => {
-    const checkUser = async () => {
+    const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
       if (data?.session) {
         window.location.replace('/dashboard');
@@ -12,14 +12,14 @@ export default function Home() {
         window.location.replace('/login');
       }
     };
-    checkUser();
+    checkSession();
   }, []);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white text-black font-sans">
+    <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-500">Cargando sistema...</p>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-500 font-medium">Iniciando sistema...</p>
       </div>
     </div>
   );
