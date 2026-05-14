@@ -8,11 +8,13 @@ export default function Home() {
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        router.push('/dashboard'); // Si ya tiene sesión, va al panel
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        // Si ya inició sesión, va al dashboard
+        router.replace('/dashboard');
       } else {
-        router.push('/login'); // Si no, va al login
+        // Si no, va al login
+        router.replace('/login');
       }
     };
     checkUser();
@@ -21,8 +23,8 @@ export default function Home() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white text-black">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="font-medium text-gray-500">Iniciando sistema...</p>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-500 font-medium">Cargando sistema...</p>
       </div>
     </div>
   );
