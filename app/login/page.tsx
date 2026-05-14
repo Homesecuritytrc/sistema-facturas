@@ -15,27 +15,34 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
-    const { error: authError } = await supabase.auth.signInWithPassword({
+    // DEPURACIÓN: Verificamos si las llaves existen antes de intentar entrar
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      alert("ERROR: Vercel no está leyendo la URL de Supabase. Revisa las variables de entorno.");
+      setLoading(false);
+      return;
+    }
+
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (authError) {
-      setError("Credenciales incorrectas. Revisa tu correo y contraseña.");
+      alert("Error de Supabase: " + authError.message);
+      setError(authError.message);
       setLoading(false);
-    } else {
-      // Usamos window.location para forzar la entrada al dashboard
-      window.location.href = '/dashboard';
+    } else if (data.session) {
+      alert("¡Login Exitoso! Entrando al Dashboard...");
+      // Forzamos el salto al dashboard
+      window.location.assign('/dashboard');
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="p-8 bg-white shadow-xl rounded-2xl w-full max-w-md text-black border border-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4 text-black">
+      <div className="p-8 bg-white shadow-xl rounded-2xl w-full max-w-md border border-gray-100">
         <h1 className="text-3xl font-bold mb-6 text-center text-blue-600">Admin Facturas</h1>
-        
-        {error && <p className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm text-center">{error}</p>}
-
+        {error && <p className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm text-center font-medium">{error}</p>}
         <form onSubmit={handleLogin} className="space-y-4">
           <input 
             type="email" placeholder="Correo electrónico" 
@@ -49,9 +56,9 @@ export default function LoginPage() {
           />
           <button 
             type="submit" disabled={loading}
-            className="w-full bg-blue-600 text-white p-3 rounded-xl font-bold hover:bg-blue-700 disabled:bg-gray-400"
+            className="w-full bg-blue-600 text-white p-3 rounded-xl font-bold hover:bg-blue-700 disabled:bg-gray-400 transition"
           >
-            {loading ? 'Cargando...' : 'Entrar al Sistema'}
+            {loading ? 'Verificando...' : 'Entrar al Sistema'}
           </button>
         </form>
       </div>
